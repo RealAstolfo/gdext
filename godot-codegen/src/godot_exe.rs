@@ -53,16 +53,20 @@ fn update_version_file(version: &str) {
     let version_path = Path::new(GODOT_VERSION_PATH);
     rerun_on_changed(version_path);
 
-    std::fs::write(version_path, version).unwrap_or_else(|_| panic!("write Godot version to file {}",
-        version_path.display()));
+    std::fs::write(version_path, version)
+        .unwrap_or_else(|_| panic!("write Godot version to file {}", version_path.display()));
 }
 
 fn read_godot_version(godot_bin: &Path) -> String {
     let output = Command::new(godot_bin)
         .arg("--version")
         .output()
-        .unwrap_or_else(|_| panic!("failed to invoke Godot executable '{}'",
-            godot_bin.display()));
+        .unwrap_or_else(|_| {
+            panic!(
+                "failed to invoke Godot executable '{}'",
+                godot_bin.display()
+            )
+        });
 
     let output = String::from_utf8(output.stdout).expect("convert Godot version to UTF-8");
     println!("Godot version: {}", output);
@@ -96,8 +100,12 @@ fn dump_extension_api(godot_bin: &Path, out_file: &Path) {
         .arg("--dump-extension-api")
         .arg(cwd)
         .output()
-        .unwrap_or_else(|_| panic!("failed to invoke Godot executable '{}'",
-            godot_bin.display()));
+        .unwrap_or_else(|_| {
+            panic!(
+                "failed to invoke Godot executable '{}'",
+                godot_bin.display()
+            )
+        });
 
     println!("Generated {}/extension_api.json.", cwd.display());
 }

@@ -11,6 +11,5 @@
 mod gen_ffi;
 
 pub(crate) fn run() -> bool {
-    
     true
 }

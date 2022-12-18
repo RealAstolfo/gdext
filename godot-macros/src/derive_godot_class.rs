@@ -4,9 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use crate::util::{
-    bail, ensure_kv_empty, ident, parse_kv_group, path_is_single, KvMap, KvValue,
-};
+use crate::util::{bail, ensure_kv_empty, ident, parse_kv_group, path_is_single, KvMap, KvValue};
 use crate::{util, ParseResult};
 use proc_macro2::{Ident, Punct, Span, TokenStream};
 use quote::spanned::Spanned;

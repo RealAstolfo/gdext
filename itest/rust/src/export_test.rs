@@ -7,7 +7,6 @@
 use godot::prelude::*;
 
 pub(crate) fn run() -> bool {
-    
     // No tests currently, tests using HasProperty are in Godot scripts.
 
     true

@@ -726,10 +726,7 @@ fn make_operator_fns(
 }
 
 fn format_load_error(ident: &impl std::fmt::Display) -> String {
-    format!(
-        "failed to load GDExtension function `{}`",
-        ident
-    )
+    format!("failed to load GDExtension function `{}`", ident)
 }
 
 /// Returns true if the type is so trivial that most of its operations are directly provided by Rust, and there is no need
