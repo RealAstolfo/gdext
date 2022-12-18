@@ -11,10 +11,10 @@ use std::process::Command;
 
 /// Commands related to Godot executable
 
-const GODOT_VERSION_PATH: &'static str =
+const GODOT_VERSION_PATH: &str =
     concat!(env!("CARGO_MANIFEST_DIR"), "/input/gen/godot_version.txt");
 
-const EXTENSION_API_PATH: &'static str =
+const EXTENSION_API_PATH: &str =
     concat!(env!("CARGO_MANIFEST_DIR"), "/input/gen/extension_api.json");
 
 pub fn load_extension_api_json(watch: &mut StopWatch) -> String {
@@ -35,7 +35,7 @@ pub fn load_extension_api_json(watch: &mut StopWatch) -> String {
     }
 
     let result = std::fs::read_to_string(json_path)
-        .expect(&format!("failed to open file {}", json_path.display()));
+        .unwrap_or_else(|_| panic!("failed to open file {}", json_path.display()));
     watch.record("read_json_file");
     result
 }
@@ -53,20 +53,16 @@ fn update_version_file(version: &str) {
     let version_path = Path::new(GODOT_VERSION_PATH);
     rerun_on_changed(version_path);
 
-    std::fs::write(version_path, version).expect(&format!(
-        "write Godot version to file {}",
-        version_path.display()
-    ));
+    std::fs::write(version_path, version).unwrap_or_else(|_| panic!("write Godot version to file {}",
+        version_path.display()));
 }
 
 fn read_godot_version(godot_bin: &Path) -> String {
-    let output = Command::new(&godot_bin)
+    let output = Command::new(godot_bin)
         .arg("--version")
         .output()
-        .expect(&format!(
-            "failed to invoke Godot executable '{}'",
-            godot_bin.display()
-        ));
+        .unwrap_or_else(|_| panic!("failed to invoke Godot executable '{}'",
+            godot_bin.display()));
 
     let output = String::from_utf8(output.stdout).expect("convert Godot version to UTF-8");
     println!("Godot version: {}", output);
@@ -91,7 +87,7 @@ fn read_godot_version(godot_bin: &Path) -> String {
 
 fn dump_extension_api(godot_bin: &Path, out_file: &Path) {
     let cwd = out_file.parent().unwrap();
-    std::fs::create_dir_all(cwd).expect(&format!("create directory '{}'", cwd.display()));
+    std::fs::create_dir_all(cwd).unwrap_or_else(|_| panic!("create directory '{}'", cwd.display()));
     println!("Dump extension API to dir '{}'...", cwd.display());
 
     Command::new(godot_bin)
@@ -100,10 +96,8 @@ fn dump_extension_api(godot_bin: &Path, out_file: &Path) {
         .arg("--dump-extension-api")
         .arg(cwd)
         .output()
-        .expect(&format!(
-            "failed to invoke Godot executable '{}'",
-            godot_bin.display()
-        ));
+        .unwrap_or_else(|_| panic!("failed to invoke Godot executable '{}'",
+            godot_bin.display()));
 
     println!("Generated {}/extension_api.json.", cwd.display());
 }

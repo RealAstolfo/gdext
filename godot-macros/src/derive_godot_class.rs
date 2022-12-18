@@ -5,7 +5,7 @@
  */
 
 use crate::util::{
-    bail, bail_error, ensure_kv_empty, ident, parse_kv_group, path_is_single, KvMap, KvValue,
+    bail, ensure_kv_empty, ident, parse_kv_group, path_is_single, KvMap, KvValue,
 };
 use crate::{util, ParseResult};
 use proc_macro2::{Ident, Punct, Span, TokenStream};
@@ -152,7 +152,7 @@ fn parse_fields(class: &Struct) -> ParseResult<Fields> {
                     match parse_kv_group(&attr.value) {
                         Ok(export_kv) => {
                             let exported_field =
-                                ExportedField::new_from_kv(Field::new(&field), &attr, export_kv)?;
+                                ExportedField::new_from_kv(Field::new(&field), attr, export_kv)?;
                             exported_fields.push(exported_field);
                         }
                         Err(error) => {
@@ -243,29 +243,29 @@ impl ExportedField {
 
         ensure_kv_empty(map, attr.__span())?;
 
-        return Ok(ExportedField {
+        Ok(ExportedField {
             field,
             getter,
             setter,
             variant_type,
-        });
+        })
     }
 
     fn require_key_value(map: &mut KvMap, key: &str, attr: &Attribute) -> ParseResult<String> {
         if let Some(value) = map.remove(key) {
             if let KvValue::Lit(value) = value {
-                return Ok(value);
+                Ok(value)
             } else {
-                return bail(
+                bail(
                     format!(
                         "#[export] attribute {} with a non-literal variant_type",
                         key
                     ),
                     attr,
-                )?;
+                )?
             }
         } else {
-            return bail(format!("#[export] attribute without a {}", key), attr);
+            bail(format!("#[export] attribute without a {}", key), attr)
         }
     }
 }

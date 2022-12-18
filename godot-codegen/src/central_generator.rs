@@ -412,7 +412,7 @@ fn collect_builtin_types<'a>(
         }
 
         // Lowercase without underscore, to map SHOUTY_CASE to shoutycase
-        let normalized = shout_case.to_ascii_lowercase().replace("_", "");
+        let normalized = shout_case.to_ascii_lowercase().replace('_', "");
 
         // TODO cut down on the number of cached functions generated
         // e.g. there's no point in providing operator< for int
@@ -500,7 +500,7 @@ fn make_variant_fns(
     builtin_types: &HashMap<String, BuiltinTypeInfo>,
 ) -> (TokenStream, TokenStream) {
     let (construct_decls, construct_inits) =
-        make_construct_fns(&type_names, constructors, builtin_types);
+        make_construct_fns(type_names, constructors, builtin_types);
     let (destroy_decls, destroy_inits) = make_destroy_fns(type_names, has_destructor);
     let (op_eq_decls, op_eq_inits) = make_operator_fns(type_names, operators, "==", "EQUAL");
     let (op_lt_decls, op_lt_inits) = make_operator_fns(type_names, operators, "<", "LESS");
@@ -728,7 +728,7 @@ fn make_operator_fns(
 fn format_load_error(ident: &impl std::fmt::Display) -> String {
     format!(
         "failed to load GDExtension function `{}`",
-        ident.to_string()
+        ident
     )
 }
 

@@ -31,7 +31,7 @@ pub(crate) fn generate_class_files(
             continue;
         }
 
-        if special_cases::is_class_deleted(&class.name.as_str()) {
+        if special_cases::is_class_deleted(class.name.as_str()) {
             continue;
         }
 
@@ -322,15 +322,15 @@ fn is_method_excluded(method: &Method, #[allow(unused_variables)] ctx: &mut Cont
     }
     // -- end.
 
-    method.name.starts_with("_")
+    method.name.starts_with('_')
         || method
             .return_value
             .as_ref()
-            .map_or(false, |ret| ret.type_.contains("*"))
+            .map_or(false, |ret| ret.type_.contains('*'))
         || method
             .arguments
             .as_ref()
-            .map_or(false, |args| args.iter().any(|arg| arg.type_.contains("*")))
+            .map_or(false, |args| args.iter().any(|arg| arg.type_.contains('*')))
 }
 
 #[cfg(feature = "codegen-full")]
@@ -587,7 +587,7 @@ fn make_utility_return(
     let return_ty;
 
     if let Some(ret) = return_value {
-        let ty = to_rust_type(&ret, ctx);
+        let ty = to_rust_type(ret, ctx);
         return_decl = ty.return_decl();
         return_ty = Some(ty);
     } else {
