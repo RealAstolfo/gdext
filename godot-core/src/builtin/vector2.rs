@@ -4,80 +4,30 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use godot_ffi as sys;
-use sys::{ffi_methods, GodotFfi};
+use crate::builtin::real::Real;
 
-type Inner = glam::f32::Vec2;
-//type Inner = glam::f64::DVec2;
-
-#[derive(Default, Copy, Clone, Debug, PartialEq)]
-#[repr(C)]
-pub struct Vector2 {
-    inner: Inner,
-}
+impl_vector!(Vector2, crate::builtin::real::Vec2, Real, (x, y));
+impl_float_vector!(Vector2, Real);
+impl_vector_from!(Vector2, Vector2i, Real, (x, y));
 
 impl Vector2 {
-    pub fn new(x: f32, y: f32) -> Self {
-        Self {
-            inner: Inner::new(x, y),
-        }
-    }
 
-    pub fn from_inner(inner: Inner) -> Self {
-        Self { inner }
-    }
+    /// Left unit vector. Represents the direction of left.
+    pub const LEFT: Self = Self::new(-1.0, 0.0);
 
-    /// only for testing
-    pub fn inner(self) -> Inner {
-        self.inner
-    }
+    /// Right unit vector. Represents the direction of right.
+    pub const RIGHT: Self = Self::new(1.0, 0.0);
 
-    // Hacks for example
-    // pub fn length(self) -> f32 {
-    //     self.inner.length()
-    // }
-    // pub fn normalized(self) -> Vector2 {
-    //     Self::from_inner(self.inner.normalize())
-    // }
+    /// Up unit vector. Y is down in 2D, so this vector points -Y.
+    pub const UP: Self = Self::new(0.0, -1.0);
+
+    /// Down unit vector. Y is down in 2D, so this vector points +Y.
+    pub const DOWN: Self = Self::new(0.0, 1.0);
+
     pub fn rotated(self, angle: f32) -> Self {
-        Self::from_inner(glam::Affine2::from_angle(angle).transform_vector2(self.inner))
+        glam::Affine2::from_angle(angle).transform_vector2(self.into()).into()
     }
 }
 
-impl GodotFfi for Vector2 {
-    ffi_methods! { type sys::GDExtensionTypePtr = *mut Self; .. }
-}
-
-impl std::fmt::Display for Vector2 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.inner.fmt(f)
-    }
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------
-
-type IInner = glam::IVec2;
-
-#[derive(Default, Copy, Clone, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct Vector2i {
-    inner: IInner,
-}
-
-impl Vector2i {
-    pub fn new(x: i32, y: i32) -> Self {
-        Self {
-            inner: IInner::new(x, y),
-        }
-    }
-}
-
-impl GodotFfi for Vector2i {
-    ffi_methods! { type sys::GDExtensionTypePtr = *mut Self; .. }
-}
-
-impl std::fmt::Display for Vector2i {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.inner.fmt(f)
-    }
-}
+impl_vector!(Vector2i, glam::IVec2, i32, (x, y));
+impl_vector_from!(Vector2i, Vector2, i32, (x, y));

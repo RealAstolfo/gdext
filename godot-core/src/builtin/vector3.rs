@@ -7,64 +7,35 @@
 use godot_ffi as sys;
 use sys::{ffi_methods, GodotFfi};
 
-type Inner = glam::f32::Vec3;
-// type Inner = glam::f64::DVec3;
+use crate::builtin::real::Real;
 
-#[derive(Default, Copy, Clone, Debug, PartialEq)]
-#[repr(C)]
-pub struct Vector3 {
-    inner: Inner,
-}
+impl_vector!(Vector3, crate::builtin::real::Vec3, Real, (x, y, z));
+impl_float_vector!(Vector3, Real);
+impl_vector_from!(Vector3, Vector3i, Real, (x, y, z));
 
 impl Vector3 {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Self {
-            inner: Inner::new(x, y, z),
-        }
-    }
+
+    /// Left unit vector. Represents the local direction of left, and the global direction of west.
+    pub const LEFT: Self = Self::new(-1.0, 0.0, 0.0);
+
+    /// Right unit vector. Represents the local direction of right, and the global direction of east.
+    pub const RIGHT: Self = Self::new(1.0, 0.0, 0.0);
+
+    /// Up unit vector.
+    pub const UP: Self = Self::new(0.0, 1.0, 0.0);
+
+    /// Down unit vector.
+    pub const DOWN: Self = Self::new(0.0, -1.0, 0.0);
+
+    /// Forward unit vector. Represents the local direction of forward, and the global direction of north.
+    pub const FORWARD: Self = Self::new(0.0, 0.0, -1.0);
+
+    /// Back unit vector. Represents the local direction of back, and the global direction of south.
+    pub const BACK: Self = Self::new(0.0, 0.0, 1.0);
 }
 
-impl GodotFfi for Vector3 {
-    ffi_methods! { type sys::GDExtensionTypePtr = *mut Self; .. }
-}
-
-impl std::fmt::Display for Vector3 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        //let Inner {x, y, z} = self.inner;
-        //write!(f, "({x}, {y}, {z})")
-        self.inner.fmt(f)
-    }
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------
-
-type IInner = glam::IVec3;
-
-#[derive(Default, Copy, Clone, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct Vector3i {
-    inner: IInner,
-}
-
-impl Vector3i {
-    pub fn new(x: i32, y: i32, z: i32) -> Self {
-        Self {
-            inner: IInner::new(x, y, z),
-        }
-    }
-}
-
-impl GodotFfi for Vector3i {
-    ffi_methods! { type sys::GDExtensionTypePtr = *mut Self; .. }
-}
-
-impl std::fmt::Display for Vector3i {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.inner.fmt(f)
-    }
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------
+impl_vector!(Vector3i, glam::IVec3, i32, (x, y, z));
+impl_vector_from!(Vector3i, Vector3, i32, (x, y, z));
 
 // TODO auto-generate this, alongside all the other builtin type's enums
 
